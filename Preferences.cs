@@ -5,7 +5,7 @@ namespace Ruquier;
 
 public class Preferences
 {
-  public string LastPodcast { get; set; }
+  public string? LastPodcast { get; set; }
   public int Speed { get; set; }
 
   public int LastPodcastAnnee => LastPodcast == null? 0: Utils.ExtractDateFromFile(LastPodcast).Year;
@@ -32,7 +32,8 @@ public class PreferencesManager
     if (!File.Exists(_path))
       return new Preferences(); // valeurs par défaut
 
-    var json = File.ReadAllText(_path);
-    return JsonSerializer.Deserialize<Preferences>(json);
+    var json = File.ReadAllText(_path);    
+    return JsonSerializer.Deserialize<Preferences>(json) ?? new Preferences();
+
   }
 }

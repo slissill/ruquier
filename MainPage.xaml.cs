@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Plugin.Maui.Audio;
 
 namespace Ruquier;
@@ -12,21 +13,11 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   private bool _loading = false;
   private readonly PreferencesManager _prefsManager = new PreferencesManager();
   public Preferences Prefs { get; private set; }
-  
-  public event PropertyChangedEventHandler PropertyChanged;
-
-  protected void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string name = null) =>
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
-#if ANDROID
   private string _root = "/storage/0000-0000/E1";
-#else
-  private string _root = @"E:\PODCASTS\E1";
-#endif
 
   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   private readonly IAudioManager _audioManager;
-  private IAudioPlayer _player;
+  private IAudioPlayer? _player = null;
   private bool _isDraggingSlider;
   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -34,7 +25,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   public ObservableCollection<Podcast> Podcasts { get; set; } = new();
   public ObservableCollection<int> Annees { get; set; } = new();
   public ObservableCollection<Mois> Mois { get; set; } = new();
-  private string _LastPodcastPath;
+  private string? _LastPodcastPath;
 
   private int _anneeSelectionnee;
   public int AnneeSelectionnee
@@ -50,8 +41,8 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     }
   }
 
-  private Mois _moisSelectionnee;
-  public Mois MoisSelectionnee
+  private Mois? _moisSelectionnee;
+  public Mois? MoisSelectionnee
   {
     get => _moisSelectionnee;
     set
@@ -103,7 +94,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     BindingContext = this;
     if (Prefs.LastPodcast != null)
     {
-      Podcast lastPodcast = Podcasts.FirstOrDefault(p => p.FilePath == Prefs.LastPodcast);
+      Podcast? lastPodcast = Podcasts.FirstOrDefault(p => p.FilePath == Prefs.LastPodcast);
       lstPodcasts.SelectedItem = lastPodcast;
       PlayPause();
       lstPodcasts.ScrollTo(lastPodcast, position: ScrollToPosition.Center, animate: false);
@@ -124,8 +115,20 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
   private void SetTimer()
   {
-    // Mise à jour de la position toutes les 500 ms
-    Device.StartTimer(TimeSpan.FromMilliseconds(500), () =>
+    //// Mise à jour de la position toutes les 500 ms    
+    //Device.StartTimer(TimeSpan.FromMilliseconds(500), () =>
+    //{
+    //  if (_player != null && _player.IsPlaying && !_isDraggingSlider)
+    //  {
+    //    SeekSlider.Maximum = _player.Duration;
+    //    SeekSlider.Value = _player.CurrentPosition;
+    //    UpdatePositionLabel();
+    //  }
+    //  return true;
+    //});
+
+
+    Dispatcher.StartTimer(TimeSpan.FromMilliseconds(500), () =>
     {
       if (_player != null && _player.IsPlaying && !_isDraggingSlider)
       {
@@ -133,8 +136,10 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         SeekSlider.Value = _player.CurrentPosition;
         UpdatePositionLabel();
       }
-      return true;
+      return true; // continue le timer
     });
+
+
   }
 
   private void UpdateListePodcasts()
@@ -142,7 +147,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     if(_loading) return;  
 
     Podcasts.Clear();
-    List<Podcast> lst = _allPodcasts.Where(p => p.Annee == AnneeSelectionnee && p.Mois == MoisSelectionnee.NumMois).OrderBy(p => p.Jour).ToList();
+    List<Podcast> lst = _allPodcasts.Where(p => p.Annee == AnneeSelectionnee && p.Mois == MoisSelectionnee?.NumMois).OrderBy(p => p.Jour).ToList();
     lst.ForEach(p => Podcasts.Add(p));
   }
 
@@ -176,7 +181,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
   {
 
-    string path = null;
+    string? path = null;
     try
     {
       if (e.CurrentSelection == null || e.CurrentSelection.Count == 0)
@@ -255,8 +260,6 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   {
     if (_player == null) return;
 
-    if (_player == null) return;
-
     double offset = 0;
 
     if (sender == MinusLarge) offset = -120;
@@ -278,6 +281,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
   private void UpdatePositionLabel()
   {
+    if (_player == null) return;  
     lblPosition.Text = Utils.FormatTime(_player.CurrentPosition, _player.Duration);
     lblDuration.Text = Utils.FormatTime(_player.Duration);    
   }
