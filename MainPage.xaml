@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"             
+             x:Class="Ruquier.MainPage">
+
+    <ContentPage.Resources>
+        <Style TargetType="Picker">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Margin" Value="20,0"/>
+            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Border Grid.Row="0" Margin="5" >
+            <Grid ColumnDefinitions="*,*">
+                <Picker Grid.Column="0" x:Name="cboAnnees" ItemsSource="{Binding Annees}" SelectedItem="{Binding AnneeSelectionnee}" SelectedIndexChanged="cboAnnee_SelectedIndexChanged" Title="Année" />
+                <Picker Grid.Column="1" x:Name="cboMois" ItemsSource="{Binding Mois}" SelectedItem="{Binding MoisSelectionnee}" ItemDisplayBinding="{Binding MoisStr}" SelectedIndexChanged="cboMois_SelectedIndexChanged" Title="Mois" />
+            </Grid>
+        </Border>
+
+        <CollectionView x:Name="lstPodcasts" Grid.Row="1" ItemsSource="{Binding Podcasts}" SelectionMode="Single" SelectionChanged="CollectionView_SelectionChanged">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding .}" FontSize="20" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+
+        <VerticalStackLayout Grid.Row="2" Padding="20" Spacing="20">
+
+            <Grid ColumnDefinitions="*,*">
+                <Label x:Name="lblPosition" Text="" HorizontalOptions="Start" Grid.Column="0" />
+                <Label x:Name="lblDuration" Text="" HorizontalOptions="End" Grid.Column="1" />
+            </Grid>
+            
+            
+            <Slider x:Name="SeekSlider" Minimum="0" Maximum="100" ValueChanged="OnSeekSliderChanged" />
+
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="Button">                        
+                        <Setter Property="Margin" Value="5,0"/>                        
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" x:Name="MinusLarge" Text="-2mn" Clicked="OnMove" />
+                <Button Grid.Column="1" x:Name="MinusSmall" Text="-10s" Clicked="OnMove" />
+                <Button Grid.Column="2" x:Name="PlayPauseButton" Text="Play" Clicked="OnPlayPauseClicked" />
+                <Button Grid.Column="3" x:Name="PlusSmall" Text="+10s" Clicked="OnMove" />
+                <Button Grid.Column="4" x:Name="PlusLarge" Text="+2mn" Clicked="OnMove" />
+
+            </Grid>
+            
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>
