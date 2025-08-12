@@ -115,19 +115,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
   private void SetTimer()
   {
-    //// Mise à jour de la position toutes les 500 ms    
-    //Device.StartTimer(TimeSpan.FromMilliseconds(500), () =>
-    //{
-    //  if (_player != null && _player.IsPlaying && !_isDraggingSlider)
-    //  {
-    //    SeekSlider.Maximum = _player.Duration;
-    //    SeekSlider.Value = _player.CurrentPosition;
-    //    UpdatePositionLabel();
-    //  }
-    //  return true;
-    //});
-
-
+    // Mise à jour de la position toutes les 500 ms
     Dispatcher.StartTimer(TimeSpan.FromMilliseconds(500), () =>
     {
       if (_player != null && _player.IsPlaying && !_isDraggingSlider)
