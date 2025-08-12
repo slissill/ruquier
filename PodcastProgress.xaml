@@ -1,0 +1,23 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Ruquier.PodcastProgress"
+             x:Name="Root"
+             WidthRequest="{Binding MaxWidth, Source={x:Reference Root}}"
+             HeightRequest="{Binding BarHeight, Source={x:Reference Root}}">
+
+    <Grid WidthRequest="{Binding MaxWidth, Source={x:Reference Root}}"
+          HeightRequest="{Binding BarHeight, Source={x:Reference Root}}">
+        <!-- Fond -->
+        <BoxView Color="#DDD"
+                 CornerRadius="0"
+                 HeightRequest="{Binding BarHeight, Source={x:Reference Root}}" />
+
+        <!-- Barre -->
+        <BoxView Color="Green"
+                 CornerRadius="0"
+                 HeightRequest="{Binding BarHeight, Source={x:Reference Root}}"
+                 WidthRequest="{Binding BarWidth, Source={x:Reference Root}}" 
+                 HorizontalOptions="Start" />
+    </Grid>
+
+</ContentView>

@@ -42,9 +42,10 @@
                     <HorizontalStackLayout Padding="5" Spacing="10">
                         
                         <Label Text="{Binding JourSemaine}" WidthRequest="50" FontSize="20" VerticalOptions="Center" />
-                        <Label Text="{Binding Jour}" WidthRequest="10" FontSize="20" VerticalOptions="Center" />
+                        <Label Text="{Binding Jour}" WidthRequest="25" FontSize="20" VerticalOptions="Center" />
                         <Label Text="..." WidthRequest="120" FontSize="20" VerticalOptions="Center" HorizontalOptions="Center" />
-                        <ProgressBar Progress=".66" WidthRequest="150" HeightRequest="10" ProgressColor="Green" VerticalOptions="Center" />
+                        <!--<ProgressBar Progress=".66" WidthRequest="150" HeightRequest="10" ProgressColor="Green" VerticalOptions="Center" />-->
+                        <local:PodcastProgress Progress=".5" WidthRequest="100" HeightRequest="12" VerticalOptions="Center" />
                         
                     </HorizontalStackLayout>
 
