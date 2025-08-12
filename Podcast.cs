@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Android.Media.Metrics;
 namespace Ruquier;
 
 public class Podcast
@@ -11,10 +12,11 @@ public class Podcast
   public int Jour => Date.Day;
   public string Jour00 => Date.Day.ToString("00");
   public string MoisString => Date.ToString("MMMM", new CultureInfo("fr-FR"));
-  public string JourSemaine => Date.ToString("dddd", new CultureInfo("fr-FR"));
+  public string JourSemaine => Date.ToString("ddd", new CultureInfo("fr-FR")).Replace(".", "");
   public override string ToString()
   {
-    return $"{Jour00}  {JourSemaine}";
+    //return $"{Jour00}  {JourSemaine}";
+    return Date.ToString ("ddd dd MMM", new CultureInfo("fr-FR"));
   }
 
   public Podcast(string file)

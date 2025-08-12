@@ -69,7 +69,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     Prefs = _prefsManager.Load();
     
-    if (Prefs.LastPodcast != null)
+    if (Prefs.LastPodcast != null && File.Exists(Prefs.LastPodcast))
     {
       AnneeSelectionnee = Prefs.LastPodcastAnnee;
       UpdateMois();
@@ -193,7 +193,9 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
       // Lance lecture
       _player.Play();
+      lblPlaying.Text = podcast.ToString();
       UpdatePlayPauseButtonText();
+      UpdatePositionLabel();
     }
     catch (Exception ex)
     {

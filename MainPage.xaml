@@ -24,15 +24,32 @@
         
         <Border Grid.Row="0" Margin="5" >
             <Grid ColumnDefinitions="*,*">
-                <Picker Grid.Column="0" x:Name="cboAnnees" ItemsSource="{Binding Annees}" SelectedItem="{Binding AnneeSelectionnee}" SelectedIndexChanged="CboAnnee_SelectedIndexChanged" Title="Année" />
-                <Picker Grid.Column="1" x:Name="cboMois" ItemsSource="{Binding Mois}" SelectedItem="{Binding MoisSelectionnee}" ItemDisplayBinding="{Binding MoisStr}" SelectedIndexChanged="CboMois_SelectedIndexChanged" Title="Mois" />
+                <Picker Grid.Column="0" x:Name="cboAnnees" FontAttributes="Bold" ItemsSource="{Binding Annees}" SelectedItem="{Binding AnneeSelectionnee}" SelectedIndexChanged="CboAnnee_SelectedIndexChanged" Title="Année" />
+                <Picker Grid.Column="1" x:Name="cboMois" FontAttributes="Bold" ItemsSource="{Binding Mois}" SelectedItem="{Binding MoisSelectionnee}" ItemDisplayBinding="{Binding MoisStr}" SelectedIndexChanged="CboMois_SelectedIndexChanged" Title="Mois" />
             </Grid>
         </Border>
 
-        <CollectionView x:Name="lstPodcasts" Grid.Row="1" ItemsSource="{Binding Podcasts}" SelectionMode="Single" SelectionChanged="CollectionView_SelectionChanged">
+        <CollectionView x:Name="lstPodcasts" Grid.Row="1" 
+                        ItemsSource="{Binding Podcasts}" 
+                        SelectionMode="Single" 
+                        SelectionChanged="CollectionView_SelectionChanged"
+                        Margin="10">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="local:Podcast">
-                    <Label Text="{Binding .}" FontSize="20" />
+
+
+
+                    <HorizontalStackLayout Padding="5" Spacing="10">
+                        
+                        <Label Text="{Binding JourSemaine}" WidthRequest="50" FontSize="20" VerticalOptions="Center" />
+                        <Label Text="{Binding Jour}" WidthRequest="10" FontSize="20" VerticalOptions="Center" />
+                        <Label Text="..." WidthRequest="120" FontSize="20" VerticalOptions="Center" HorizontalOptions="Center" />
+                        <ProgressBar Progress=".66" WidthRequest="150" HeightRequest="10" ProgressColor="Green" VerticalOptions="Center" />
+                        
+                    </HorizontalStackLayout>
+
+
+
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
@@ -40,11 +57,11 @@
 
         <VerticalStackLayout Grid.Row="2" Padding="20" Spacing="20">
 
-            <Grid ColumnDefinitions="*,*">
-                <Label x:Name="lblPosition" Text="" HorizontalOptions="Start" Grid.Column="0" />
-                <Label x:Name="lblDuration" Text="" HorizontalOptions="End" Grid.Column="1" />
-            </Grid>
-            
+            <Grid ColumnDefinitions="*,*, *">
+                <Label  Grid.Column="0" x:Name="lblPosition" FontSize="Small" Text="__:__:__" HorizontalOptions="Start"/>
+                <Label  Grid.Column="1" x:Name="lblPlaying" FontAttributes="Bold" Text="" HorizontalOptions="Start"/>
+                <Label  Grid.Column="2" x:Name="lblDuration" FontSize="Small" Text="__:__:__" HorizontalOptions="End"/>
+            </Grid>            
             
             <Slider x:Name="SeekSlider" Minimum="0" Maximum="100" ValueChanged="OnSeekSliderChanged" />
 
