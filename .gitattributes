@@ -1,0 +1,53 @@
+# =========================
+# MAUI / .NET Project EOL Rules
+# =========================
+
+# Par défaut : auto-détection, normalisation en LF dans Git, conversion CRLF sur Windows checkout
+* text=auto
+
+# -------------------------
+# Code C# et fichiers projet Visual Studio
+# -------------------------
+*.cs     text eol=crlf
+*.csproj text eol=crlf
+*.sln    text eol=crlf
+*.props  text eol=crlf
+*.targets text eol=crlf
+
+# -------------------------
+# Fichiers Android / iOS / MAUI
+# -------------------------
+*.xml    text eol=lf
+*.axml   text eol=lf
+*.plist  text eol=lf
+*.storyboard text eol=lf
+*.gradle text eol=lf
+*.java   text eol=lf
+*.kt     text eol=lf
+*.swift  text eol=lf
+
+# -------------------------
+# Scripts
+# -------------------------
+*.sh     text eol=lf
+*.bash   text eol=lf
+*.cmd    text eol=crlf
+*.bat    text eol=crlf
+*.ps1    text eol=crlf
+
+# -------------------------
+# Assets binaires (pas de conversion EOL)
+# -------------------------
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.mp3    binary
+*.wav    binary
+*.mp4    binary
+*.mov    binary
+*.pdf    binary
+*.zip    binary
+*.dll    binary
+*.exe    binary
