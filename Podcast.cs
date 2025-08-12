@@ -1,7 +1,9 @@
-﻿using System.Globalization;
+﻿using System.ComponentModel;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 namespace Ruquier;
 
-public class Podcast
+public class Podcast : INotifyPropertyChanged
 {
   public string FilePath { get; }
   public DateTime Date { get; }
@@ -14,7 +16,6 @@ public class Podcast
   public string JourSemaine => Date.ToString("ddd", new CultureInfo("fr-FR")).Replace(".", "");
   public override string ToString()
   {
-    //return $"{Jour00}  {JourSemaine}";
     return Date.ToString ("ddd dd MMM", new CultureInfo("fr-FR"));
   }
 
@@ -22,6 +23,28 @@ public class Podcast
   {
     FilePath = file;
     Date = Utils.ExtractDateFromFile(file);
+  }
+
+
+  private double _progress;
+  public double Progress
+  {
+    get => _progress;
+    set
+    {
+      if (_progress != value)
+      {
+        _progress = value;
+        OnPropertyChanged(); // déclenche l’événement
+      }
+    }
+  }
+
+  // === INotifyPropertyChanged ===
+  public event PropertyChangedEventHandler PropertyChanged;
+  protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+  {
+    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
   }
 
 }

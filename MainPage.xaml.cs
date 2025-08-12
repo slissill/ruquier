@@ -118,6 +118,13 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
         SeekSlider.Maximum = _player.Duration;
         SeekSlider.Value = _player.CurrentPosition;
         UpdatePositionLabel();
+
+        if (lstPodcasts.SelectedItem is Podcast podcast)
+        {
+          podcast.Progress = _player.CurrentPosition / _player.Duration;
+        }
+
+
       }
       return true; // continue le timer
     });
@@ -193,6 +200,10 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
       _player = _audioManager.CreatePlayer(fileStream);
 
       // Lance lecture
+      if (podcast.Progress > 0)
+      {
+        _player.Seek(_player.Duration * podcast.Progress);
+      }
       _player.Play();
       lblPlaying.Text = podcast.ToString();
       UpdatePlayPauseButtonText();

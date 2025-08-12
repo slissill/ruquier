@@ -48,7 +48,8 @@
                         <Label Text="{Binding JourSemaine}" WidthRequest="50" VerticalOptions="Center" />
                         <Label Text="{Binding Jour}" WidthRequest="25" VerticalOptions="Center" />
                         <Label Text="..." WidthRequest="120" VerticalOptions="Center" HorizontalOptions="Center" />                        
-                        <local:PodcastProgress Progress=".33" WidthRequest="100" HeightRequest="12" VerticalOptions="Center" HorizontalOptions="End" />
+                        
+                        <local:PodcastProgress Progress="{Binding Progress}" WidthRequest="100" HeightRequest="12" VerticalOptions="Center" HorizontalOptions="End" />
                         
                     </HorizontalStackLayout>
 
