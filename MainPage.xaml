@@ -31,7 +31,7 @@
 
         <CollectionView x:Name="lstPodcasts" Grid.Row="1" ItemsSource="{Binding Podcasts}" SelectionMode="Single" SelectionChanged="CollectionView_SelectionChanged">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="x:String">
+                <DataTemplate x:DataType="local:Podcast">
                     <Label Text="{Binding .}" FontSize="20" />
                 </DataTemplate>
             </CollectionView.ItemTemplate>
