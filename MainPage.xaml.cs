@@ -9,11 +9,9 @@ namespace Ruquier;
 
 public partial class MainPage : ContentPage, INotifyPropertyChanged
 {
-
-  private bool _loading = false;
-  private readonly PreferencesManager _prefsManager = new PreferencesManager();
+  private readonly PreferencesManager _prefsManager = new();
   public Preferences Prefs { get; private set; }
-  private string _root = "/storage/0000-0000/E1";
+  private readonly string _root = "/storage/0000-0000/E1";
 
   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   private readonly IAudioManager _audioManager;
@@ -21,7 +19,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   private bool _isDraggingSlider;
   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-  private List<Podcast> _allPodcasts;
+  private readonly IEnumerable<Podcast> _allPodcasts;
   public ObservableCollection<Podcast> Podcasts { get; set; } = new();
   public ObservableCollection<int> Annees { get; set; } = new();
   public ObservableCollection<Mois> Mois { get; set; } = new();
@@ -63,16 +61,14 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     this.SetTimer();    
     Permissions.RequestStoragePermission();
 
-    _allPodcasts = PodcastService.LoadPodcasts(_root).ToList();
+    _allPodcasts = PodcastService.LoadPodcasts(_root);
 
     // Liste années
-    List<int> annees = _allPodcasts.Select(p => p.Annee).Distinct().OrderBy(y => y).ToList();
-    annees.ForEach(y => Annees.Add(y));
+    foreach (var y in _allPodcasts.Select(p => p.Annee).Distinct().OrderBy(y => y))
+      Annees.Add(y);
 
-    
     Prefs = _prefsManager.Load();
-
-    _loading = true;  
+    
     if (Prefs.LastPodcast != null)
     {
       AnneeSelectionnee = Prefs.LastPodcastAnnee;
@@ -86,8 +82,6 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
       MoisSelectionnee = Mois.First();
       
     }
-    _loading = false;
-
     
     UpdateListePodcasts();
 
@@ -132,15 +126,17 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
   private void UpdateListePodcasts()
   {
-    if(_loading) return;  
-
     Podcasts.Clear();
-    List<Podcast> lst = _allPodcasts.Where(p => p.Annee == AnneeSelectionnee && p.Mois == MoisSelectionnee?.NumMois).OrderBy(p => p.Jour).ToList();
-    lst.ForEach(p => Podcasts.Add(p));
+    var lst = _allPodcasts
+        .Where(p => p.Annee == AnneeSelectionnee && p.Mois == MoisSelectionnee?.NumMois)
+        .OrderBy(p => p.Jour);
+
+    foreach (var p in lst) Podcasts.Add(p);
+
   }
 
   private bool _IgnoreMoisChange = false; 
-  private void cboAnnee_SelectedIndexChanged(object sender, EventArgs e)
+  private void CboAnnee_SelectedIndexChanged(object sender, EventArgs e)
   {
     _IgnoreMoisChange = true;
     AnneeSelectionnee = (int)cboAnnees.SelectedItem;
@@ -150,7 +146,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     UpdateListePodcasts();
   }
 
-  private void cboMois_SelectedIndexChanged(object sender, EventArgs e)
+  private void CboMois_SelectedIndexChanged(object sender, EventArgs e)
   {
     if (_IgnoreMoisChange) return;
 
@@ -161,9 +157,15 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   private void UpdateMois()
   {
     Mois.Clear();
-    List<int> numMois = _allPodcasts.Where(p=>p.Annee == AnneeSelectionnee).Select(p => p.Mois).Distinct().OrderBy(m => m).ToList();    
-    numMois.ForEach(n => Mois.Add(new Mois(n)));
-    
+    foreach (var n in _allPodcasts
+                        .Where(p => p.Annee == AnneeSelectionnee)
+                        .Select(p => p.Mois)
+                        .Distinct()
+                        .OrderBy(m => m))
+    {
+      Mois.Add(new Mois(n));
+    }
+
   }
 
   private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
