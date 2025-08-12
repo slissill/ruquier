@@ -56,6 +56,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Platforms\Android\Resources\Fonts\MaterialIcons-Regular.ttf" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.90" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
@@ -66,6 +70,15 @@
 	  <MauiXaml Update="PodcastProgress.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Platforms\Android\NewFolder\" />
+	  <Folder Include="Platforms\Android\Resources\Images\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiFont Include="Platforms\Android\Resources\Fonts\MaterialIcons-Regular.ttf" />
 	</ItemGroup>
 
 </Project>

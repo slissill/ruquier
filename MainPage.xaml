@@ -40,12 +40,15 @@
 
 
                     <HorizontalStackLayout Padding="5" Spacing="10">
-                        
-                        <Label Text="{Binding JourSemaine}" WidthRequest="50" FontSize="20" VerticalOptions="Center" />
-                        <Label Text="{Binding Jour}" WidthRequest="25" FontSize="20" VerticalOptions="Center" />
-                        <Label Text="..." WidthRequest="120" FontSize="20" VerticalOptions="Center" HorizontalOptions="Center" />
-                        <!--<ProgressBar Progress=".66" WidthRequest="150" HeightRequest="10" ProgressColor="Green" VerticalOptions="Center" />-->
-                        <local:PodcastProgress Progress=".5" WidthRequest="100" HeightRequest="12" VerticalOptions="Center" />
+                        <HorizontalStackLayout.Resources>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="14"/>
+                            </Style>
+                        </HorizontalStackLayout.Resources>
+                        <Label Text="{Binding JourSemaine}" WidthRequest="50" VerticalOptions="Center" />
+                        <Label Text="{Binding Jour}" WidthRequest="25" VerticalOptions="Center" />
+                        <Label Text="..." WidthRequest="120" VerticalOptions="Center" HorizontalOptions="Center" />                        
+                        <local:PodcastProgress Progress=".33" WidthRequest="100" HeightRequest="12" VerticalOptions="Center" HorizontalOptions="End" />
                         
                     </HorizontalStackLayout>
 
@@ -79,9 +82,21 @@
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
+                
                 <Button Grid.Column="0" x:Name="MinusLarge" Text="-2mn" Clicked="OnMove" />
                 <Button Grid.Column="1" x:Name="MinusSmall" Text="-10s" Clicked="OnMove" />
-                <Button Grid.Column="2" x:Name="PlayPauseButton" Text="Play" Clicked="OnPlayPauseClicked" />
+                
+                <Button Grid.Column="2" x:Name="PlayPauseButton" FontSize="30" Text="" Clicked="OnPlayPauseClicked" />
+
+                <!--<ImageButton Grid.Column="2"
+             x:Name="PlayPauseButton"
+             WidthRequest="50" HeightRequest="50"
+             Clicked="OnPlayPauseClicked"
+             BackgroundColor="Transparent"
+             Source="play.png"
+             Aspect="AspectFill" />-->
+
+
                 <Button Grid.Column="3" x:Name="PlusSmall" Text="+10s" Clicked="OnMove" />
                 <Button Grid.Column="4" x:Name="PlusLarge" Text="+2mn" Clicked="OnMove" />
 
