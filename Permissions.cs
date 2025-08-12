@@ -40,7 +40,7 @@ public static class Permissions
     {
       if (ContextCompat.CheckSelfPermission(activity, Manifest.Permission.ReadExternalStorage) != Permission.Granted)
       {
-        ActivityCompat.RequestPermissions(activity, new string[]
+        ActivityCompat.RequestPermissions(activity, new[]
         {
                     Manifest.Permission.ReadExternalStorage,
                     Manifest.Permission.WriteExternalStorage
