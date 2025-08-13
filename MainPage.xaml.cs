@@ -10,9 +10,12 @@ namespace Ruquier;
 
 public partial class MainPage : ContentPage, INotifyPropertyChanged
 {
+  #region declarations  
+  
   private readonly PreferencesManager _prefsManager = new();
   public Preferences Prefs { get; private set; }
-  private readonly string _root = "/storage/0000-0000/E1";
+  private readonly string _root = "/storage/0000-0000/E1";                // sur emulateur 
+  //private readonly string _root = "/storage/0141-3140/PODCASTS/E1";    // Sur REDMI 12C
 
   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   private readonly IAudioManager _audioManager;
@@ -25,6 +28,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   public ObservableCollection<int> Annees { get; set; } = new();
   public ObservableCollection<Mois> Mois { get; set; } = new();
   private string? _LastPodcastPath;
+  private bool _IgnoreMoisChange = false;
 
   private int _anneeSelectionnee;
   public int AnneeSelectionnee
@@ -53,7 +57,9 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
       }
     }
   }
+  #endregion
 
+  #region constructor  
   public MainPage(IAudioManager audioManager)
   {
 
@@ -96,7 +102,9 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     }
 
   }
+  #endregion
 
+  #region evennements  
   protected override void OnAppearing()
   {
     base.OnAppearing();
@@ -108,42 +116,6 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     };
   }
 
-  private void SetTimer()
-  {
-    // Mise à jour de la position toutes les 500 ms
-    Dispatcher.StartTimer(TimeSpan.FromMilliseconds(500), () =>
-    {
-      if (_player != null && _player.IsPlaying && !_isDraggingSlider)
-      {
-        SeekSlider.Maximum = _player.Duration;
-        SeekSlider.Value = _player.CurrentPosition;
-        UpdatePositionLabel();
-
-        if (lstPodcasts.SelectedItem is Podcast podcast)
-        {
-          podcast.Progress = _player.CurrentPosition / _player.Duration;
-        }
-
-
-      }
-      return true; // continue le timer
-    });
-
-
-  }
-
-  private void UpdateListePodcasts()
-  {
-    Podcasts.Clear();
-    var lst = _allPodcasts
-        .Where(p => p.Annee == AnneeSelectionnee && p.Mois == MoisSelectionnee?.NumMois)
-        .OrderBy(p => p.Jour);
-
-    foreach (var p in lst) Podcasts.Add(p);
-
-  }
-
-  private bool _IgnoreMoisChange = false; 
   private void CboAnnee_SelectedIndexChanged(object sender, EventArgs e)
   {
     _IgnoreMoisChange = true;
@@ -160,20 +132,6 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     MoisSelectionnee = (Mois)cboMois.SelectedItem;
     UpdateListePodcasts();
-  }
-
-  private void UpdateMois()
-  {
-    Mois.Clear();
-    foreach (var n in _allPodcasts
-                        .Where(p => p.Annee == AnneeSelectionnee)
-                        .Select(p => p.Mois)
-                        .Distinct()
-                        .OrderBy(m => m))
-    {
-      Mois.Add(new Mois(n));
-    }
-
   }
 
   private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -220,6 +178,97 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     PlayPause();
   }
 
+  private void OnSeekSliderChanged(object sender, ValueChangedEventArgs e)
+  {
+    if (_player == null) return;
+
+    if (_isDraggingSlider)
+    {
+      _player.Seek(e.NewValue);
+      UpdatePositionLabel();
+    }
+  }
+
+  private void OnMove(object sender, EventArgs e)
+  {
+    if (_player == null) return;
+
+    double offset = 0;
+
+    if (sender == MinusLarge) offset = -120;
+    else if (sender == MinusSmall) offset = -10;
+    else if (sender == PlusSmall) offset = 10;
+    else if (sender == PlusLarge) offset = 120;
+
+    // Nouvelle position
+    double newPos = _player.CurrentPosition + offset;
+
+    // Clamp entre 0 et la durée
+    if (newPos < 0) newPos = 0;
+    if (newPos > _player.Duration) newPos = _player.Duration;
+
+    _player.Seek(newPos);
+    SeekSlider.Value = newPos;
+    UpdatePositionLabel();
+  }
+
+  protected override void OnDisappearing()
+  {
+    base.OnDisappearing();
+    PreferencesSave();
+  }
+  #endregion
+
+  #region Methodes  
+  private void SetTimer()
+  {
+    // Mise à jour de la position toutes les 500 ms
+    Dispatcher.StartTimer(TimeSpan.FromMilliseconds(500), () =>
+    {
+      if (_player != null && _player.IsPlaying && !_isDraggingSlider)
+      {
+        SeekSlider.Maximum = _player.Duration;
+        SeekSlider.Value = _player.CurrentPosition;
+        UpdatePositionLabel();
+
+        if (lstPodcasts.SelectedItem is Podcast podcast)
+        {
+          podcast.Progress = _player.CurrentPosition / _player.Duration;
+        }
+
+
+      }
+      return true; // continue le timer
+    });
+
+
+  }
+
+  private void UpdateListePodcasts()
+  {
+    Podcasts.Clear();
+    var lst = _allPodcasts
+        .Where(p => p.Annee == AnneeSelectionnee && p.Mois == MoisSelectionnee?.NumMois)
+        .OrderBy(p => p.Jour);
+
+    foreach (var p in lst) Podcasts.Add(p);
+
+  }
+
+  private void UpdateMois()
+  {
+    Mois.Clear();
+    foreach (var n in _allPodcasts
+                        .Where(p => p.Annee == AnneeSelectionnee)
+                        .Select(p => p.Mois)
+                        .Distinct()
+                        .OrderBy(m => m))
+    {
+      Mois.Add(new Mois(n));
+    }
+
+  }
+
   private void PlayPause()
   {
     if (_player == null)
@@ -255,53 +304,12 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
       PlayPauseButton.Text = _player.IsPlaying ? iconPause : iconPlay;
     }
   }
-  
-  private void OnSeekSliderChanged(object sender, ValueChangedEventArgs e)
-  {
-    if (_player == null) return;
-
-    if (_isDraggingSlider)
-    {
-      _player.Seek(e.NewValue);
-      UpdatePositionLabel();
-    }
-  }
-
-  private void OnMove(object sender, EventArgs e)
-  {
-    if (_player == null) return;
-
-    double offset = 0;
-
-    if (sender == MinusLarge) offset = -120;
-    else if (sender == MinusSmall) offset = -10;
-    else if (sender == PlusSmall) offset = 10;
-    else if (sender == PlusLarge) offset = 120;
-
-    // Nouvelle position
-    double newPos = _player.CurrentPosition + offset;
-
-    // Clamp entre 0 et la durée
-    if (newPos < 0) newPos = 0;
-    if (newPos > _player.Duration) newPos = _player.Duration;
-
-    _player.Seek(newPos);
-    SeekSlider.Value = newPos;
-    UpdatePositionLabel();    
-  }
 
   private void UpdatePositionLabel()
   {
     if (_player == null) return;  
     lblPosition.Text = Utils.FormatTime(_player.CurrentPosition, _player.Duration);
     lblDuration.Text = Utils.FormatTime(_player.Duration);    
-  }
-  
-
-  protected override void OnDisappearing()
-  {
-    base.OnDisappearing();
-    PreferencesSave();
   }
 
   private void PreferencesSave()
@@ -310,7 +318,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     Prefs.LastPodcast = _LastPodcastPath;
     _prefsManager.Save(Prefs);
   }
-
+  #endregion
 }
 
 
