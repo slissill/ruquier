@@ -5,6 +5,7 @@ namespace Ruquier;
 
 public class Preferences
 {
+  public string? Root { get; set; }
   public string? LastPodcast { get; set; }
   public int Speed { get; set; }
 

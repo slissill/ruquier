@@ -14,7 +14,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   
   private readonly PreferencesManager _prefsManager = new();
   public Preferences Prefs { get; private set; }
-  private readonly string _root = "/storage/0000-0000/E1";                // sur emulateur 
+  //private string _root = "/storage/0000-0000/E1";                // sur emulateur 
   //private readonly string _root = "/storage/0141-3140/PODCASTS/E1";    // Sur REDMI 12C
 
   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -23,7 +23,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   private bool _isDraggingSlider;
   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-  private readonly IEnumerable<Podcast> _allPodcasts;
+  private IEnumerable<Podcast> _allPodcasts;
   public ObservableCollection<Podcast> Podcasts { get; set; } = new();
   public ObservableCollection<int> Annees { get; set; } = new();
   public ObservableCollection<Mois> Mois { get; set; } = new();
@@ -62,37 +62,45 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   #region constructor  
   public MainPage(IAudioManager audioManager)
   {
-
     InitializeComponent();
     _audioManager = audioManager;
-    this.SetTimer();    
+    _allPodcasts = new List<Podcast>();
     Permissions.RequestStoragePermission();
+    Init();
+  }
 
-    _allPodcasts = PodcastService.LoadPodcasts(_root);
+  private void Init()
+  {
 
-    // Liste années
+    SetTimer();
+    InitSeekSlider();
+
+    
+    Prefs = _prefsManager.Load();
+    _allPodcasts = PodcastService.LoadPodcasts(Prefs.Root);
+
+    // Remplir les pickers
+    Annees.Clear();
     foreach (var y in _allPodcasts.Select(p => p.Annee).Distinct().OrderBy(y => y))
       Annees.Add(y);
 
-    Prefs = _prefsManager.Load();
-    
     if (Prefs.LastPodcast != null && File.Exists(Prefs.LastPodcast))
     {
       AnneeSelectionnee = Prefs.LastPodcastAnnee;
-      UpdateMois();
+      AlimPickerMois();
       MoisSelectionnee = Mois.First(m => m.NumMois == Prefs.LastPodcastMois);
     }
     else
     {
       AnneeSelectionnee = Annees.First();
-      UpdateMois();
+      AlimPickerMois();
       MoisSelectionnee = Mois.First();
-      
     }
-    
+
     UpdateListePodcasts();
 
     BindingContext = this;
+
     if (Prefs.LastPodcast != null)
     {
       Podcast? lastPodcast = Podcasts.FirstOrDefault(p => p.FilePath == Prefs.LastPodcast);
@@ -100,14 +108,10 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
       PlayPause();
       lstPodcasts.ScrollTo(lastPodcast, position: ScrollToPosition.Center, animate: false);
     }
-
   }
-  #endregion
 
-  #region evennements  
-  protected override void OnAppearing()
+  private void InitSeekSlider()
   {
-    base.OnAppearing();
     SeekSlider.DragStarted += (s, e) => _isDraggingSlider = true;
     SeekSlider.DragCompleted += (s, e) =>
     {
@@ -115,12 +119,14 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
       _player?.Seek(SeekSlider.Value);
     };
   }
+  #endregion
 
+  #region Evennements  
   private void CboAnnee_SelectedIndexChanged(object sender, EventArgs e)
   {
     _IgnoreMoisChange = true;
     AnneeSelectionnee = (int)cboAnnees.SelectedItem;
-    UpdateMois();
+    AlimPickerMois();
     MoisSelectionnee = Mois.First();
     _IgnoreMoisChange = false;
     UpdateListePodcasts();
@@ -255,7 +261,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
   }
 
-  private void UpdateMois()
+  private void AlimPickerMois()
   {
     Mois.Clear();
     foreach (var n in _allPodcasts
@@ -319,6 +325,11 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
     _prefsManager.Save(Prefs);
   }
   #endregion
+
+  private void Button_Clicked(object sender, EventArgs e)
+  {
+    DisplayAlert("blabla", "Texte", "OK");
+  }
 }
 
 

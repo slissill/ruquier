@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Ruquier.PreferencesPage"
+             Title="PreferencesPage">
+    <VerticalStackLayout Padding="20">
+        
+        <Label Text="Chemin du dossier root des podcasts" />
+        <Entry x:Name="RootEntry" 
+               Placeholder="/storage/0000-0000/E1" 
+               Text="/storage/0000-0000/E1"
+               />
+
+        <HorizontalStackLayout>
+            <RadioButton x:Name="optEmulateur" GroupName="GroupRoot" Content="Emul." IsChecked="True" CheckedChanged="optRoot_CheckedChanged" />
+            <RadioButton x:Name="optRedmi" GroupName="GroupRoot" Content="Redmi" IsChecked="False" CheckedChanged="optRoot_CheckedChanged" />
+            <RadioButton x:Name="optPixel" GroupName="GroupRoot" Content="Pixel" IsChecked="False" CheckedChanged="optRoot_CheckedChanged" />
+            
+        </HorizontalStackLayout>
+        
+
+        <Button Text="Valider" Clicked="OnValidateClicked" />
+    </VerticalStackLayout>
+</ContentPage>
