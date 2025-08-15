@@ -289,21 +289,13 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
   private void UpdatePlayPauseButtonText()
   {
-
     //https://fonts.google.com/icons?selected=Material+Symbols+Outlined:play_arrow:FILL@0;wght@400;GRAD@0;opsz@24&icon.size=24&icon.color=%235f6368&icon.platform=web
-    
-    string iconPlay = "\ue037";  // Play (Material Icons)
-    string iconPause = "\ue034"; // Pause (Material Icons)
-    PlayPauseButton.FontFamily = "MaterialIcons";
-
+    string iconPlay = "\ue037";
+    string iconPause = "\ue034";
     if (_player == null)
-    {
       PlayPauseButton.Text = iconPlay;
-    }
     else
-    {
       PlayPauseButton.Text = _player.IsPlaying ? iconPause : iconPlay;
-    }
   }
 
   private void UpdatePositionLabel()

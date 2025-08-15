@@ -8,7 +8,7 @@
 
     <ContentPage.Resources>
         <Style TargetType="Picker">
-            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontSize" Value="30"/>
             <Setter Property="Margin" Value="20,0"/>
             <Setter Property="HorizontalTextAlignment" Value="Center"/>
         </Style>
@@ -19,6 +19,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -39,18 +40,19 @@
                 <DataTemplate x:DataType="local:Podcast">
 
 
-
-                    <HorizontalStackLayout Padding="5" Spacing="10">
+                    <HorizontalStackLayout Padding="0,8" Spacing="40">
+                        
                         <HorizontalStackLayout.Resources>
                             <Style TargetType="Label">
-                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="FontSize" Value="25"/>
+                                <Setter Property="FontAttributes" Value="Bold"/>
+                                <Setter Property="VerticalOptions" Value="Center"/>
                             </Style>
                         </HorizontalStackLayout.Resources>
-                        <Label Text="{Binding JourSemaine}" WidthRequest="50" VerticalOptions="Center" />
-                        <Label Text="{Binding Jour}" WidthRequest="25" VerticalOptions="Center" />
-                        <Label Text="..." WidthRequest="120" VerticalOptions="Center" HorizontalOptions="Center" />                        
                         
-                        <local:PodcastProgress Progress="{Binding Progress}" WidthRequest="100" HeightRequest="12" VerticalOptions="Center" HorizontalOptions="End" />
+                        <Label Text="{Binding JourSemaine}" WidthRequest="60"  />
+                        <Label Text="{Binding Jour}" WidthRequest="40"  />
+                        <local:PodcastProgress Progress="{Binding Progress}" MaxWidth="150" BarHeight="20" VerticalOptions="Center" HorizontalOptions="Center" />
                         
                     </HorizontalStackLayout>
 
@@ -63,50 +65,77 @@
 
         <VerticalStackLayout Grid.Row="2" Padding="20" Spacing="20">
 
-            <Grid ColumnDefinitions="*,*, *">
+            <Grid ColumnDefinitions="*,*,*">
                 <Label  Grid.Column="0" x:Name="lblPosition" FontSize="Small" Text="__:__:__" HorizontalOptions="Start"/>
-                <Label  Grid.Column="1" x:Name="lblPlaying" FontAttributes="Bold" Text="" HorizontalOptions="Start"/>
+                
                 <Label  Grid.Column="2" x:Name="lblDuration" FontSize="Small" Text="__:__:__" HorizontalOptions="End"/>
             </Grid>            
             
-            <Slider x:Name="SeekSlider" Minimum="0" Maximum="100" ValueChanged="OnSeekSliderChanged" />
+            <Slider x:Name="SeekSlider" Minimum="0" Maximum="100" BackgroundColor="Gray" ValueChanged="OnSeekSliderChanged" />
 
             <Grid>
                 <Grid.Resources>
                     <Style TargetType="Button">                        
-                        <Setter Property="Margin" Value="5,0"/>                        
+                        <Setter Property="Margin" Value="5,0"/>
                     </Style>
                 </Grid.Resources>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                
-                <Button Grid.Column="0" x:Name="MinusLarge" Text="-2mn" Clicked="OnMove" />
-                <Button Grid.Column="1" x:Name="MinusSmall" Text="-10s" Clicked="OnMove" />
-                
-                <Button Grid.Column="2" x:Name="PlayPauseButton" FontSize="30" Text="" Clicked="OnPlayPauseClicked" />
-
-                <!--<ImageButton Grid.Column="2"
-             x:Name="PlayPauseButton"
-             WidthRequest="50" HeightRequest="50"
-             Clicked="OnPlayPauseClicked"
-             BackgroundColor="Transparent"
-             Source="play.png"
-             Aspect="AspectFill" />-->
 
 
-                <Button Grid.Column="3" x:Name="PlusSmall" Text="+10s" Clicked="OnMove" />
-                <Button Grid.Column="4" x:Name="PlusLarge" Text="+2mn" Clicked="OnMove" />
+                <Label  Grid.Column="0" x:Name="lblPlaying" FontAttributes="Bold" Text="" HorizontalOptions="Start" VerticalOptions="Center"/>
+                <Button Grid.Column="1" x:Name="PlayPauseButton" FontFamily="MaterialIcons" FontSize="30" Text="" Clicked="OnPlayPauseClicked" />
+                <Button Grid.Column="2" x:Name="ShowHideOptions" FontSize="15" Text="options" />
 
             </Grid>
             
         </VerticalStackLayout>
 
-        <Button Grid.Row="3" Text="Text" Clicked="Button_Clicked"/>
+        <!--OPTIONS-->
+        <VerticalStackLayout Grid.Row="3" Padding="20" Spacing="20">
+            
+            <VerticalStackLayout.Resources>                
+                <Style TargetType="Border">
+                    <Setter Property="Background" Value="Orange"/>
+                    <Setter Property="Padding" Value="10"/>
+                    <Setter Property="Stroke" Value="Red"/>
+                    <Setter Property="StrokeThickness" Value="4"/>
+                    <Setter Property="StrokeShape">
+                        <Setter.Value>
+                            <RoundRectangle CornerRadius="10" />
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </VerticalStackLayout.Resources>
+            
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+                
+                <Border>
+                    <HorizontalStackLayout Spacing="20">
+                        <Button x:Name="MinusSmall" FontSize="20" FontFamily="MaterialIcons" Text="&#xe5cb;" Clicked="OnMove" />
+                        <Button x:Name="PlusSmall" FontSize="20" FontFamily="MaterialIcons" Text="&#xe5cc;"  Clicked="OnMove" />
+                    </HorizontalStackLayout>
+                </Border>
+
+                <Border>
+                    <HorizontalStackLayout Spacing="20">
+                        <Button x:Name="MinusLarge" FontSize="20" FontFamily="MaterialIcons" Text="&#xeac3;" Clicked="OnMove" />
+                        <Button x:Name="PlusLarge"  FontSize="20" FontFamily="MaterialIcons" Text="&#xeac9;" Clicked="OnMove" />
+                    </HorizontalStackLayout>
+                </Border>
+
+
+            </HorizontalStackLayout>
+            
+            
+        </VerticalStackLayout>
+        
+        <Button Grid.Row="4" Text="TEST" HorizontalOptions="Center" VerticalOptions="Center" Clicked="Button_Clicked" Padding="0"/>
     </Grid>
 
 </ContentPage>
+
+    

@@ -16,7 +16,7 @@ public class Podcast : INotifyPropertyChanged
   public string JourSemaine => Date.ToString("ddd", new CultureInfo("fr-FR")).Replace(".", "");
   public override string ToString()
   {
-    return Date.ToString ("ddd dd MMM", new CultureInfo("fr-FR"));
+    return Date.ToString("ddd dd MMM", new CultureInfo("fr-FR")).Replace(".", "");
   }
 
   public Podcast(string file)
