@@ -50,7 +50,7 @@
                             </Style>
                         </HorizontalStackLayout.Resources>
                         
-                        <Label Text="{Binding JourSemaine}" WidthRequest="60"  />
+                        <Label Text="{Binding JourSemaine}" WidthRequest="60" Margin="5,0,0,0"  />
                         <Label Text="{Binding Jour}" WidthRequest="40"  />
                         <local:PodcastProgress Progress="{Binding Progress}" MaxWidth="150" BarHeight="20" VerticalOptions="Center" HorizontalOptions="Center" />
                         

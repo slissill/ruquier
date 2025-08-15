@@ -1,10 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using Plugin.Maui.Audio;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Ruquier;
 
@@ -302,7 +298,39 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   {
     if (_player == null) return;  
     lblPosition.Text = Utils.FormatTime(_player.CurrentPosition, _player.Duration);
-    lblDuration.Text = Utils.FormatTime(_player.Duration);    
+    lblDuration.Text = Utils.FormatTime(_player.Duration);
+    if (_player.CurrentPosition >= _player.Duration -1)
+    {
+      PlayNext();      
+    }
+  }
+
+  private void PlayNext()
+  {
+    // dans ma collectionView 
+    // si il y a un element de selectionner : 
+    //    si il y a un element apres on le selectionne
+    //    sinon on selectionne le 1er element
+    // sinon
+    //    on selectionne le 1er element
+    if (lstPodcasts.SelectedItem is Podcast currentPodcast)
+    {
+      int index = Podcasts.IndexOf(currentPodcast);
+      if (index < Podcasts.Count - 1)
+      {
+        lstPodcasts.SelectedItem = Podcasts[index + 1];
+      }
+      else
+      {
+        lstPodcasts.SelectedItem = Podcasts.FirstOrDefault();
+      }
+    }
+    else
+    {
+      lstPodcasts.SelectedItem = Podcasts.FirstOrDefault();
+    } 
+
+
   }
 
   private void PreferencesSave()
