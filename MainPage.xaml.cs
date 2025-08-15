@@ -14,16 +14,12 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   
   private readonly PreferencesManager _prefsManager = new();
   public Preferences Prefs { get; private set; }
-  //private string _root = "/storage/0000-0000/E1";                // sur emulateur 
-  //private readonly string _root = "/storage/0141-3140/PODCASTS/E1";    // Sur REDMI 12C
-
   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   private readonly IAudioManager _audioManager;
   private IAudioPlayer? _player = null;
   private bool _isDraggingSlider;
   //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-  private IEnumerable<Podcast> _allPodcasts;
+  private List<Podcast> _allPodcasts;
   public ObservableCollection<Podcast> Podcasts { get; set; } = new();
   public ObservableCollection<int> Annees { get; set; } = new();
   public ObservableCollection<Mois> Mois { get; set; } = new();
@@ -74,10 +70,9 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
     SetTimer();
     InitSeekSlider();
-
     
     Prefs = _prefsManager.Load();
-    _allPodcasts = PodcastService.LoadPodcasts(Prefs.Root);
+    _allPodcasts = PodcastsSerializer.Load();
 
     // Remplir les pickers
     Annees.Clear();
@@ -159,7 +154,7 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
       _player?.Dispose();
       _player = null;
 
-      // Ouvre le fichier depuis la SD
+      // Ouvre le fichier depuis le storage
       using var fileStream = File.OpenRead(path);
       _player = _audioManager.CreatePlayer(fileStream);
 
@@ -220,8 +215,9 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
 
   protected override void OnDisappearing()
   {
-    base.OnDisappearing();
+    SavePodcasts();
     PreferencesSave();
+    base.OnDisappearing();
   }
   #endregion
 
@@ -246,7 +242,6 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
       }
       return true; // continue le timer
     });
-
 
   }
 
@@ -319,16 +314,26 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   }
 
   private void PreferencesSave()
-  {   
-    //if (lstPodcasts.SelectedItem is Podcast podcast)
+  { 
     Prefs.LastPodcast = _LastPodcastPath;
     _prefsManager.Save(Prefs);
   }
+
+  private void SavePodcasts()
+  { 
+    PodcastsSerializer.Save(_allPodcasts);
+  }
+
   #endregion
+
+  private void MsgBox(string message)
+  {
+      DisplayAlert("Title", message, "OK");
+  }
 
   private void Button_Clicked(object sender, EventArgs e)
   {
-    DisplayAlert("blabla", "Texte", "OK");
+    SavePodcasts(); 
   }
 }
 

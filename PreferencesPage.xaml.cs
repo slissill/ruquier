@@ -4,39 +4,50 @@ namespace Ruquier;
 
 public partial class PreferencesPage : ContentPage
 {
-  private PreferencesManager _prefsManager;
 
-  public PreferencesPage(PreferencesManager prefsManager)
+  Preferences prefV1;
+
+  public PreferencesPage()
 	{
 		InitializeComponent();
-    _prefsManager = prefsManager;
   }
 
-  private async void OnValidateClicked(object sender, EventArgs e)
+  private void OnValidateClicked(object sender, EventArgs e)
   {
     string path = RootEntry.Text?.Trim() ?? "";
     if (!Directory.Exists(path))
     {
-      await DisplayAlert("Erreur", "Le chemin n'est pas valide.", "OK");
+      DisplayAlert("Erreur", "Le chemin n'est pas valide.", "OK");
       return;
     }
 
-    var prefs = _prefsManager.Load();
-    prefs.Root = path;
-    _prefsManager.Save(prefs);
+    bool ResetPodcastsJson = false; 
+    
+    var prefsManager = new PreferencesManager();
+    var prefs = prefsManager.Load();
+    string rootBefore = prefs.Root ?? ""; 
 
-    // Retour à la page principale
+    prefs.Root = path;
+    prefsManager.Save(prefs);
+
+    if (rootBefore != prefs.Root)
+    {
+      SetPodcastsJson(prefs);
+    }
     Application.Current.MainPage = new MainPage(new AudioManager());
+  }
+
+  private async void SetPodcastsJson(Preferences pref)
+  {
+
+    List<Podcast> allPodcasts = PodcastService.LoadPodcasts(pref.Root).ToList();
+    PodcastsSerializer.Save(allPodcasts);
   }
 
   private void optRoot_CheckedChanged(object sender, CheckedChangedEventArgs e)
   {
-    if (sender == optEmulateur && e.Value)
-      RootEntry.Text = "/storage/0000-0000/E1";
-    else if (sender == optRedmi && e.Value)
-      RootEntry.Text = "/storage/0141-3140/PODCASTS/E1";
-    else if (sender == optPixel && e.Value)
-      RootEntry.Text = "/storage/????-????/PODCASTS/E1";
-
+    if (sender == optEmulateur && e.Value)      RootEntry.Text = "/storage/0000-0000/E1";
+    else if (sender == optRedmi && e.Value)     RootEntry.Text = "/storage/0141-3140/PODCASTS/E1";
+    else if (sender == optPixel && e.Value)     RootEntry.Text = "/storage/????-????/PODCASTS/E1";
   }
 }
