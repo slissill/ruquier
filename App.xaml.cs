@@ -22,9 +22,21 @@ namespace Ruquier
 
       var _prefsManager = new PreferencesManager();
 
+
+      //var appDataPath = FileSystem.AppDataDirectory;
+      //var prefFile = Path.Combine(appDataPath, "preferences.json");
+      //var podcastsFile = Path.Combine(appDataPath, "podcasts.json");
+      //if (File.Exists(prefFile)) File.Delete(prefFile);
+      //if (File.Exists(podcastsFile)) File.Delete(podcastsFile);
+
+
+
+
+
       //var prefsReset = _prefsManager.Load();
       //prefsReset.Root = null;
       //_prefsManager.Save(prefsReset);
+
 
       var prefs = _prefsManager.Load();
       

@@ -46,8 +46,8 @@ public partial class PreferencesPage : ContentPage
 
   private void optRoot_CheckedChanged(object sender, CheckedChangedEventArgs e)
   {
-    if (sender == optEmulateur && e.Value)      RootEntry.Text = "/storage/0000-0000/E1";
-    else if (sender == optRedmi && e.Value)     RootEntry.Text = "/storage/0141-3140/PODCASTS/E1";
-    else if (sender == optPixel && e.Value)     RootEntry.Text = "/storage/????-????/PODCASTS/E1";
+    if (sender == optEmulateur && e.Value)      RootEntry.Text = "/storage/0000-0000/PODCASTS";
+    else if (sender == optRedmi && e.Value)     RootEntry.Text = "/storage/0141-3140/PODCASTS";
+    else if (sender == optPixel && e.Value)     RootEntry.Text = "/storage/????-????/PODCASTS";
   }
 }

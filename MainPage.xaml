@@ -6,136 +6,211 @@
              x:Class="Ruquier.MainPage"
              x:DataType="local:MainPage">
 
-    <ContentPage.Resources>
-        <Style TargetType="Picker">
-            <Setter Property="FontSize" Value="30"/>
-            <Setter Property="Margin" Value="20,0"/>
-            <Setter Property="HorizontalTextAlignment" Value="Center"/>
-        </Style>
-    </ContentPage.Resources>
 
-    <Grid>
-        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <Border Grid.Row="0" Margin="5" >
-            <Grid ColumnDefinitions="*,*">
-                <Picker Grid.Column="0" x:Name="cboAnnees" FontAttributes="Bold" ItemsSource="{Binding Annees}" SelectedItem="{Binding AnneeSelectionnee}" SelectedIndexChanged="CboAnnee_SelectedIndexChanged" Title="Année" />
-                <Picker Grid.Column="1" x:Name="cboMois" FontAttributes="Bold" ItemsSource="{Binding Mois}" SelectedItem="{Binding MoisSelectionnee}" ItemDisplayBinding="{Binding MoisStr}" SelectedIndexChanged="CboMois_SelectedIndexChanged" Title="Mois" />
-            </Grid>
-        </Border>
+    <Grid RowDefinitions="Auto,*,Auto" Padding="10" RowSpacing="5">
+        <Grid.Resources>
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="Gray"/>
+            </Style>
+                   
+        </Grid.Resources>
 
-        <CollectionView x:Name="lstPodcasts" Grid.Row="1" 
-                        ItemsSource="{Binding Podcasts}" 
-                        SelectionMode="Single" 
-                        SelectionChanged="CollectionView_SelectionChanged"
-                        Margin="10">
+        <VerticalStackLayout Grid.Row="0" >
+
+            <VerticalStackLayout.Resources>
+                <Style TargetType="Picker">
+                    <Setter Property="FontSize" Value="30"/>
+                    <Setter Property="Margin" Value="20,0"/>
+                    <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                </Style>
+            </VerticalStackLayout.Resources>
+
+
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <!--  HEURE -->
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <Label x:Name="lblHeure" Text="02:05" FontSize="30" HorizontalOptions="Center"  VerticalOptions="Center"  FontAttributes="Bold" Margin="0,10,0,10"/>
+
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <!--  ANNEE, MOIS -->
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <Border Grid.Row="1" Margin="5" >
+                <Grid ColumnDefinitions="*,*">
+                    <Picker Grid.Column="0" x:Name="pickerAnnees" FontAttributes="Bold" ItemsSource="{Binding Annees}" SelectedItem="{Binding AnneeSelectionnee}" SelectedIndexChanged="pickerAnnee_SelectedIndexChanged" Title="Année" />
+                    <Picker Grid.Column="1" x:Name="pickerMois" FontAttributes="Bold" ItemsSource="{Binding Mois}" SelectedItem="{Binding MoisSelectionnee}" ItemDisplayBinding="{Binding MoisStr}" SelectedIndexChanged="pickerMois_SelectedIndexChanged" Title="Mois" />
+                </Grid>
+            </Border>
+
+        </VerticalStackLayout>
+        
+        <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+        <!--  CALENDRIER -->
+        <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+        <CollectionView Grid.Row="1" x:Name="lstPodcasts" 
+                SelectionMode="Single"
+                ItemsSource="{Binding Dates}"                
+                Margin="10">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="5"
+                         VerticalItemSpacing="10"
+                         HorizontalItemSpacing="10"/>
+            </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="local:Podcast">
+                <DataTemplate x:DataType="local:CalendarDay">
+                    <Border Padding="5" 
+                            IsVisible="{Binding IsInMonth}" 
+                            Stroke="LightGray" 
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 5"                            
+                            WidthRequest="70"
+                            HeightRequest="40"
+                            Shadow="{x:Null}"
+                            HorizontalOptions="Center" 
+                            VerticalOptions="Center">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnPodcastTapped" NumberOfTapsRequired="1" />
+                        </Border.GestureRecognizers>
 
 
-                    <HorizontalStackLayout Padding="0,8" Spacing="40">
-                        
-                        <HorizontalStackLayout.Resources>
-                            <Style TargetType="Label">
-                                <Setter Property="FontSize" Value="25"/>
-                                <Setter Property="FontAttributes" Value="Bold"/>
-                                <Setter Property="VerticalOptions" Value="Center"/>
-                            </Style>
-                        </HorizontalStackLayout.Resources>
-                        
-                        <Label Text="{Binding JourSemaine}" WidthRequest="60" Margin="5,0,0,0"  />
-                        <Label Text="{Binding Jour}" WidthRequest="40"  />
-                        <local:PodcastProgress Progress="{Binding Progress}" MaxWidth="150" BarHeight="20" VerticalOptions="Center" HorizontalOptions="Center" />
-                        
-                    </HorizontalStackLayout>
+                        <Border.Triggers>
+                            <!-- Trigger pour PlayingStatus en Lecture -->
+                            <DataTrigger TargetType="Border" Binding="{Binding PlayingStatus}" Value="Playing">
+                                <Setter Property="BackgroundColor" Value="DarkBlue"/>                                
+                            </DataTrigger>
+
+                            <!-- Trigger pour PlayingStatus en Pause -->
+                            <DataTrigger TargetType="Border" Binding="{Binding PlayingStatus}" Value="Paused">
+                                <Setter Property="BackgroundColor" Value="Crimson"/>                                
+                            </DataTrigger>
+
+                            <!-- Trigger pour PlayingStatus None -->
+                            <DataTrigger TargetType="Border" Binding="{Binding PlayingStatus}" Value="None">
+                                <Setter Property="BackgroundColor" Value="#505050"/>                                
+                            </DataTrigger>
+                        </Border.Triggers>
 
 
-
+                        <Label IsVisible="{Binding HasPodcast}" Text="{Binding Day}" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold" TextColor="White" FontSize="Medium" />
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
 
-        <VerticalStackLayout Grid.Row="2" Padding="20" Spacing="20">
+        <VerticalStackLayout Grid.Row="2" Spacing="10">
 
-            <Grid ColumnDefinitions="*,*,*">
-                <Label  Grid.Column="0" x:Name="lblPosition" FontSize="Small" Text="__:__:__" HorizontalOptions="Start"/>
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <!--  TimePosition, Playing+PlayPause, TimeDuration -->
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <Grid ColumnDefinitions="*,Auto,*" VerticalOptions="End">
                 
-                <Label  Grid.Column="2" x:Name="lblDuration" FontSize="Small" Text="__:__:__" HorizontalOptions="End"/>
-            </Grid>            
-            
-            <Slider x:Name="SeekSlider" Minimum="0" Maximum="100" BackgroundColor="Gray" ValueChanged="OnSeekSliderChanged" />
+                <!--Position-->
+                <Label  Grid.Column="0" x:Name="lblPosition" FontSize="Small" Text="" HorizontalOptions="Start" VerticalOptions="Center"/>
+                
+                <!--Title-->
+                <Border Grid.Column="1" Stroke="Gray" StrokeShape="RoundRectangle 8" Padding="8" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPlayingTapped" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="10">
+                        <Label x:Name="lblPlayingTitle" Text="{Binding CurrentPodcast.Title}" FontSize="Medium" VerticalOptions="Center"/>
+                        <Label x:Name="lblPlayingPlayPause" FontFamily="MaterialIcons" Text="{Binding CurrentPodcast.PlayingStatusToString}" FontSize="Title"  FontAttributes="Bold" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
 
-            <Grid>
+                    <Border.Triggers>
+                        <!-- Trigger pour PlayingStatus en Lecture -->
+                        <DataTrigger TargetType="Border" Binding="{Binding CurrentPodcast.PlayingStatus}" Value="Playing">
+                            <Setter Property="BackgroundColor" Value="DarkBlue"/>
+                        </DataTrigger>
+
+                        <!-- Trigger pour PlayingStatus en Pause -->
+                        <DataTrigger TargetType="Border" Binding="{Binding CurrentPodcast.PlayingStatus}" Value="Paused">
+                            <Setter Property="BackgroundColor" Value="Crimson"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+
+                </Border>
+                
+                <!--Duration-->
+                <Label  Grid.Column="2" x:Name="lblDuration" FontSize="Small" Text="" HorizontalOptions="End" VerticalOptions="Center"/>
+                
+            </Grid>
+
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <!--  Slider -->
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <Slider x:Name="SeekSlider" Minimum="0" Maximum="100" BackgroundColor="Gray" ValueChanged="OnSeekSliderChanged"  VerticalOptions="End"/>
+
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <!--  MOVE buttons (short / large)  -->
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            
+            <Grid ColumnDefinitions="*, Auto" HorizontalOptions="Fill">
                 <Grid.Resources>
-                    <Style TargetType="Button">                        
-                        <Setter Property="Margin" Value="5,0"/>
+                    <Style TargetType="Border">
+                        <Setter Property="Padding" Value="10"/>
+                        <Setter Property="StrokeThickness" Value="0"/>
+                        <Setter Property="StrokeShape">
+                            <Setter.Value>
+                                <RoundRectangle CornerRadius="20" />
+                            </Setter.Value>
+                        </Setter>
                     </Style>
                 </Grid.Resources>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
+                
+                <Border Grid.Column="0" HorizontalOptions="Start">
+                    <HorizontalStackLayout Spacing="5">
+                        <Button x:Name="MinusSmall" FontSize="20" FontAttributes="Bold" FontFamily="MaterialIcons" Text="&#xe5cb;" Clicked="OnMove" />
+                        <Label Text="{Binding Prefs.MoveShortToString}" VerticalOptions="Center" Margin="3,0"/>
+                        <Button x:Name="PlusSmall" FontSize="20" FontAttributes="Bold" FontFamily="MaterialIcons" Text="&#xe5cc;"  Clicked="OnMove" />
+                    </HorizontalStackLayout>
+                </Border>
 
-
-                <Label  Grid.Column="0" x:Name="lblPlaying" FontAttributes="Bold" Text="" HorizontalOptions="Start" VerticalOptions="Center"/>
-                <Button Grid.Column="1" x:Name="PlayPauseButton" FontFamily="MaterialIcons" FontSize="30" Text="" Clicked="OnPlayPauseClicked" />
-                <Button Grid.Column="2" x:Name="ShowHideOptions" FontSize="15" Text="options" />
+                <Border Grid.Column="1" HorizontalOptions="End">
+                    <HorizontalStackLayout Spacing="5">
+                        <Button x:Name="MinusLarge" FontSize="20" FontAttributes="Bold" FontFamily="MaterialIcons" Text="&#xeac3;" Clicked="OnMove" />
+                        <Label Text="{Binding Prefs.MoveLargeToString}"  VerticalOptions="Center" Margin="3,0"/>
+                        <Button x:Name="PlusLarge"  FontSize="20" FontAttributes="Bold" FontFamily="MaterialIcons" Text="&#xeac9;" Clicked="OnMove" />
+                    </HorizontalStackLayout>
+                </Border>
 
             </Grid>
-            
-        </VerticalStackLayout>
 
-        <!--OPTIONS-->
-        <VerticalStackLayout Grid.Row="3" Padding="20" Spacing="20">
-            
-            <VerticalStackLayout.Resources>                
-                <Style TargetType="Border">
-                    <Setter Property="Background" Value="Orange"/>
-                    <Setter Property="Padding" Value="10"/>
-                    <Setter Property="Stroke" Value="Red"/>
-                    <Setter Property="StrokeThickness" Value="4"/>
-                    <Setter Property="StrokeShape">
-                        <Setter.Value>
-                            <RoundRectangle CornerRadius="10" />
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </VerticalStackLayout.Resources>
-            
-            <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
-                
-                <Border>
-                    <HorizontalStackLayout Spacing="20">
-                        <Button x:Name="MinusSmall" FontSize="20" FontFamily="MaterialIcons" Text="&#xe5cb;" Clicked="OnMove" />
-                        <Button x:Name="PlusSmall" FontSize="20" FontFamily="MaterialIcons" Text="&#xe5cc;"  Clicked="OnMove" />
-                    </HorizontalStackLayout>
-                </Border>
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <!--  VITESSE  -->
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <Grid ColumnDefinitions="*,Auto, Auto, Auto, Auto" ColumnSpacing="4" Margin="10,0">
+                <Label  Grid.Column="0" Text="Vitesse" VerticalOptions="Center" FontSize="20"/>
+                <Button Grid.Column="1" x:Name="btnSpeedMinus" FontSize="20" FontAttributes="Bold" Text="-" Clicked="OnSpeed" />
+                <Button Grid.Column="2" x:Name="btnSpeedReset" FontSize="12" FontAttributes="Bold" Text="{Binding Prefs.Speed, StringFormat='{}{0}%'}" Clicked="OnSpeed" />
+                <Button Grid.Column="3" x:Name="btnSpeedPlus" FontSize="20" FontAttributes="Bold"  Text="+"  Clicked="OnSpeed" />
+            </Grid>
 
-                <Border>
-                    <HorizontalStackLayout Spacing="20">
-                        <Button x:Name="MinusLarge" FontSize="20" FontFamily="MaterialIcons" Text="&#xeac3;" Clicked="OnMove" />
-                        <Button x:Name="PlusLarge"  FontSize="20" FontFamily="MaterialIcons" Text="&#xeac9;" Clicked="OnMove" />
-                    </HorizontalStackLayout>
-                </Border>
-
-
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <!--  AUTO-PAUSE-TIME  -->
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4" Margin="10,0">
+                <Label Grid.Column="0" 
+                       Text="Mise en pause auto." 
+                       VerticalOptions="Center" 
+                       FontSize="20"/>
+                <Picker Grid.Column="1" 
+                        x:Name="pickerDuration" 
+                        ItemsSource="{Binding DurationOptions}"
+                        FontAttributes="Bold" 
+                        FontSize="20"
+                        ItemDisplayBinding="{Binding Display}" 
+                        SelectedItem="{Binding SelectedDuration, Mode=TwoWay}" />
+            </Grid>
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <!--  Bottom  -->
+            <!--  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+            <HorizontalStackLayout IsVisible="Collapse"                         >
+                <Button Text="TEST" Clicked="Button_Clicked"/>                                
+                <Button x:Name="ShowHideOptions" FontSize="15" Text="options" />
             </HorizontalStackLayout>
             
-            
+
         </VerticalStackLayout>
-        
-        <Button Grid.Row="4" Text="TEST" HorizontalOptions="Center" VerticalOptions="Center" Clicked="Button_Clicked" Padding="0"/>
     </Grid>
-
 </ContentPage>
-
-    

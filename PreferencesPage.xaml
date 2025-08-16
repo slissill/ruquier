@@ -7,8 +7,8 @@
         
         <Label Text="Chemin du dossier root des podcasts" />
         <Entry x:Name="RootEntry" 
-               Placeholder="/storage/0000-0000/E1" 
-               Text="/storage/0000-0000/E1"
+               Placeholder="/storage/0000-0000/PODCASTS" 
+               Text="/storage/0000-0000/PODCASTS"
                />
 
         <HorizontalStackLayout>

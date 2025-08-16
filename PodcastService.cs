@@ -4,7 +4,7 @@ namespace Ruquier;
 
 public static partial class PodcastService
 {
-  [GeneratedRegex(@"^E1 - \d{4}-\d{2}-\d{2}\.mp3$", RegexOptions.IgnoreCase)]
+  [GeneratedRegex(@"\d{4}-\d{2}-\d{2}\.mp3$", RegexOptions.IgnoreCase)]
   private static partial Regex GetRegex();
 
   public static IEnumerable<Podcast> LoadPodcasts(string folderPath)
