@@ -240,7 +240,8 @@ public partial class MainPage : ContentPage, INotifyPropertyChanged
   {
 
     // Gestion de l'heure
-    lblHeure.Text = DateTime.Now.ToString("HHhmm");
+
+    lblHeure.Text = $"{DateTime.Now.ToString("HH")}h{DateTime.Now.ToString("mm")}";
 
 
     // Gestion du slider

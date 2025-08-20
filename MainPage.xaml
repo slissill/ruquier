@@ -51,9 +51,7 @@
                 ItemsSource="{Binding Dates}"                
                 Margin="10">
             <CollectionView.ItemsLayout>
-                <GridItemsLayout Orientation="Vertical" Span="5"
-                         VerticalItemSpacing="10"
-                         HorizontalItemSpacing="10"/>
+                <GridItemsLayout Orientation="Vertical" Span="5" VerticalItemSpacing="10" HorizontalItemSpacing="10"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="local:CalendarDay">

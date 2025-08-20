@@ -41,10 +41,12 @@ namespace Ruquier
       var prefs = _prefsManager.Load();
       
       Page startPage;
-      if (string.IsNullOrEmpty(prefs.Root) || !Directory.Exists(prefs.Root))
-        startPage = new PreferencesPage();
-      else
-        startPage = new MainPage(new AudioManager());
+      //if (string.IsNullOrEmpty(prefs.Root) || !Directory.Exists(prefs.Root))
+      //  startPage = new PreferencesPage();
+      //else
+      //  startPage = new MainPage(new AudioManager());
+
+      startPage = new AllMonth();
       return new Window(startPage);
     }
   }

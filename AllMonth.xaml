@@ -1,0 +1,38 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Ruquier.AllMonth"
+             xmlns:local="clr-namespace:Ruquier"
+             Title="AllMonth">
+    <ScrollView>
+        <VerticalStackLayout>
+
+            <CollectionView x:Name="lstJours"
+                ItemsSource="{Binding Jours}"
+                IsGrouped="True"
+                Margin="10">
+
+                <CollectionView.ItemsLayout>
+                    <!--<LinearItemsLayout Orientation="Vertical"/>-->
+                    <GridItemsLayout Orientation="Vertical" Span="5" VerticalItemSpacing="10" HorizontalItemSpacing="10"/>
+                </CollectionView.ItemsLayout>               
+                
+                <CollectionView.GroupHeaderTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="LightGray" Padding="5" Margin="0,5,0,5" CornerRadius="8">
+                            <Label Text="{Binding Periode}" FontAttributes="Bold" FontSize="14" HorizontalOptions="Center" />
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.GroupHeaderTemplate>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="local:Jour">
+                        <Label Text="{Binding Day}"  FontSize="14" HorizontalOptions="Center" VerticalOptions="Center" Margin="10"/>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

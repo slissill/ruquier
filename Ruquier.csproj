@@ -67,6 +67,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="AllMonth.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="PodcastProgress.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
